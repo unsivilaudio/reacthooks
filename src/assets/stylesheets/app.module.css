@@ -1,0 +1,10 @@
+.App {
+    width: 80vh;
+    margin: 0 auto;
+    margin-top: 2rem;
+}
+
+.App h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
