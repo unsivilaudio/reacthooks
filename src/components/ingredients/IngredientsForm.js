@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import Spinner from '../ui/Spinner';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
@@ -37,7 +38,11 @@ const IngredientsForm = props => {
                     value={inputState.amount}
                     change={handleChange}
                 />
-                <Button btnType='submit' label='Add Ingredient' />
+                <Button
+                    btnType='submit'
+                    label={props.loading ? <Spinner /> : 'Add Ingredient'}
+                    loading={props.loading}
+                />
             </form>
         </Card>
     );

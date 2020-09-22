@@ -11,9 +11,7 @@ const IngredientList = props => {
                     return (
                         <li
                             key={el.id}
-                            onClick={() =>
-                                props.onRemoveItem.bind(this, el.id)
-                            }>
+                            onClick={() => props.onRemoveItem(el.id)}>
                             <div className={classes.Title}>{el.title}</div>
                             <div className={classes.Amount}>{el.amount}x</div>
                         </li>

@@ -1,0 +1,12 @@
+.Spinner {
+    height: 100%;
+    width: 100%;
+}
+
+.Spinner .Svg {
+    height: 80%;
+    max-height: 2.5rem;
+    width: auto;
+    margin-bottom: -4px;
+    padding: 0 3rem;
+}

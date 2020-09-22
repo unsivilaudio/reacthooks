@@ -4,10 +4,13 @@ import axios from '../../api/firebase';
 import IngredientsForm from './IngredientsForm';
 import IngredientList from './IngredientsList';
 import Search from './Search';
+import ErrorModal from '../ui/ErrorModal';
 import classes from '../../assets/stylesheets/ingredients.module.css';
 
 const Ingredients = props => {
     const [userIngredients, setUserIngredients] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         axios
@@ -20,14 +23,16 @@ const Ingredients = props => {
                 setUserIngredients(ingredients);
             })
             .catch(err => {
-                console.log(err.message);
+                setError(err);
             });
     }, []);
 
     const addIngredientHandler = ingredient => {
+        setIsLoading(true);
         axios
             .post('/ingredients.json', ingredient)
             .then(res => {
+                setIsLoading(false);
                 setUserIngredients(prevIngredients => [
                     ...prevIngredients,
                     {
@@ -37,7 +42,22 @@ const Ingredients = props => {
                 ]);
             })
             .catch(err => {
-                console.log(err.message);
+                setError(err);
+            });
+    };
+
+    const removeIngredientHandler = id => {
+        setIsLoading(true);
+        axios
+            .delete(`/ingredients/${id}.json`)
+            .then(res => {
+                setUserIngredients(prevIngredients => {
+                    return prevIngredients.filter(ing => ing.id !== id);
+                });
+                setIsLoading(false);
+            })
+            .catch(err => {
+                setError(err);
             });
     };
 
@@ -45,14 +65,25 @@ const Ingredients = props => {
         setUserIngredients(ingredients);
     };
 
+    const clearError = () => {
+        setError(null);
+        setIsLoading(false);
+    };
+
     return (
         <div className={classes.Ingredients}>
             <IngredientsForm
                 onAddIngredient={addIngredientHandler}
-                onRemoveItem={() => {}}
+                loading={isLoading}
             />
             <Search onLoadIngredients={filterIngredientsHandler} />
-            <IngredientList ingredients={userIngredients} />
+            <IngredientList
+                ingredients={userIngredients}
+                onRemoveItem={removeIngredientHandler}
+            />
+            {error ? (
+                <ErrorModal onClose={clearError}>{error.message}</ErrorModal>
+            ) : null}
         </div>
     );
 };

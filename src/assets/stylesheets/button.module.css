@@ -20,3 +20,8 @@
     box-shadow: none;
     transform: translateY(-1px);
 }
+
+.Button:disabled {
+    cursor: not-allowed;
+    background-color: #ccc;
+}
