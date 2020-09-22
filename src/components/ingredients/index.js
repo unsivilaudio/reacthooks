@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import axios from '../../api/firebase';
 
 import IngredientsForm from './IngredientsForm';
@@ -7,8 +7,22 @@ import Search from './Search';
 import ErrorModal from '../ui/ErrorModal';
 import classes from '../../assets/stylesheets/ingredients.module.css';
 
+const ingredientReducer = (currentIngredients, action) => {
+    switch (action.type) {
+        case 'SET':
+            return action.ingredients;
+        case 'ADD':
+            return [...currentIngredients, action.ingredient];
+        case 'DELETE':
+            return currentIngredients.filter(ing => ing.id !== action.id);
+        default:
+            throw new Error('Should not get there!');
+    }
+};
+
 const Ingredients = props => {
-    const [userIngredients, setUserIngredients] = useState([]);
+    const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
+    // const [userIngredients, setUserIngredients] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -20,26 +34,26 @@ const Ingredients = props => {
                     const { title, amount } = res.data[id];
                     return { id, title, amount };
                 });
-                setUserIngredients(ingredients);
+                dispatch({ type: 'SET', ingredients });
             })
             .catch(err => {
                 setError(err);
             });
     }, []);
 
-    const addIngredientHandler = ingredient => {
+    const addIngredientHandler = newIng => {
         setIsLoading(true);
         axios
-            .post('/ingredients.json', ingredient)
+            .post('/ingredients.json', newIng)
             .then(res => {
                 setIsLoading(false);
-                setUserIngredients(prevIngredients => [
-                    ...prevIngredients,
-                    {
+                dispatch({
+                    type: 'ADD',
+                    ingredient: {
                         id: res.data.name,
-                        ...ingredient,
+                        ...newIng,
                     },
-                ]);
+                });
             })
             .catch(err => {
                 setError(err);
@@ -51,9 +65,7 @@ const Ingredients = props => {
         axios
             .delete(`/ingredients/${id}.json`)
             .then(res => {
-                setUserIngredients(prevIngredients => {
-                    return prevIngredients.filter(ing => ing.id !== id);
-                });
+                dispatch({ type: 'DELETE', id });
                 setIsLoading(false);
             })
             .catch(err => {
@@ -62,7 +74,7 @@ const Ingredients = props => {
     };
 
     const filterIngredientsHandler = ingredients => {
-        setUserIngredients(ingredients);
+        dispatch({ type: 'SET', ingredients });
     };
 
     const clearError = () => {

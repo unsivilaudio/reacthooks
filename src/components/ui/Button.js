@@ -7,7 +7,8 @@ const button = props => {
         <button
             type={props.btnType}
             className={classes.Button}
-            disabled={props.loading}>
+            disabled={props.loading}
+            onClick={props.clicked || null}>
             {props.label}
         </button>
     );
