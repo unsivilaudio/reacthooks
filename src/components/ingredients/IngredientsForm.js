@@ -22,7 +22,7 @@ const IngredientsForm = props => {
     };
 
     return (
-        <Card>
+        <Card header='Add An Ingredient'>
             <form onSubmit={handleSubmit}>
                 <Input
                     inputType='text'
@@ -34,7 +34,7 @@ const IngredientsForm = props => {
                 <Input
                     inputType='number'
                     name='amount'
-                    label='number'
+                    label='amount'
                     value={inputState.amount}
                     change={handleChange}
                 />

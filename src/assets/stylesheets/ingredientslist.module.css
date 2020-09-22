@@ -15,11 +15,17 @@
 
 .IngredientList ul li {
     font-size: 2rem;
-    padding: 0.7rem 0;
+    padding: 0.7rem 1.5rem;
+    transition: all 0.3s linear;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.IngredientList ul li:hover {
+    background: #ccc;
+    cursor: pointer;
 }
 
 .IngredientList ul li:not(:last-child) {
