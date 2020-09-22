@@ -21,3 +21,7 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.IngredientList ul li:not(:last-child) {
+    border-bottom: 2px solid #777;
+}

@@ -1,29 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from '../../api/firebase';
 
-import Card from '../ui/Card';
-import Input from '../ui/Input';
 import IngredientsForm from './IngredientsForm';
 import IngredientList from './IngredientsList';
+import Search from './Search';
 import classes from '../../assets/stylesheets/ingredients.module.css';
 
 const Ingredients = props => {
     const [userIngredients, setUserIngredients] = useState([]);
-    const [inputState, setInputState] = useState({
-        ingFilter: '',
-    });
+
+    useEffect(() => {
+        axios
+            .get('/ingredients.json')
+            .then(res => {
+                const ingredients = Object.keys(res.data).map(id => {
+                    const { title, amount } = res.data[id];
+                    return { id, title, amount };
+                });
+                setUserIngredients(ingredients);
+            })
+            .catch(err => {
+                console.log(err.message);
+            });
+    }, []);
 
     const addIngredientHandler = ingredient => {
-        setUserIngredients(prevIngredients => [
-            ...prevIngredients,
-            {
-                id: Math.random().toString(),
-                ...ingredient,
-            },
-        ]);
+        axios
+            .post('/ingredients.json', ingredient)
+            .then(res => {
+                setUserIngredients(prevIngredients => [
+                    ...prevIngredients,
+                    {
+                        id: res.data.name,
+                        ...ingredient,
+                    },
+                ]);
+            })
+            .catch(err => {
+                console.log(err.message);
+            });
     };
 
-    const handleChange = e => {
-        setInputState({ ...inputState, [e.target.name]: e.target.value });
+    const filterIngredientsHandler = ingredients => {
+        setUserIngredients(ingredients);
     };
 
     return (
@@ -32,18 +51,7 @@ const Ingredients = props => {
                 onAddIngredient={addIngredientHandler}
                 onRemoveItem={() => {}}
             />
-            <Card>
-                <div className={classes.Filter}>
-                    <h3>Filter By Title</h3>
-                    <Input
-                        inputType='text'
-                        name='ingFilter'
-                        label='none'
-                        change={handleChange}
-                        value={inputState.ingFilter}
-                    />
-                </div>
-            </Card>
+            <Search onLoadIngredients={filterIngredientsHandler} />
             <IngredientList ingredients={userIngredients} />
         </div>
     );

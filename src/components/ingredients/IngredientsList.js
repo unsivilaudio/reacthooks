@@ -15,7 +15,7 @@ const IngredientList = props => {
                                 props.onRemoveItem.bind(this, el.id)
                             }>
                             <div className={classes.Title}>{el.title}</div>
-                            <div className={classes.Amount}>{el.amount}</div>
+                            <div className={classes.Amount}>{el.amount}x</div>
                         </li>
                     );
                 })}
