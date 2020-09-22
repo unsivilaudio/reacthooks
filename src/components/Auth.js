@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import Card from './ui/Card';
 import Input from './ui/Input';
 import Button from './ui/Button';
+import { AuthContext } from '../context/auth-context';
+
 import classes from '../assets/stylesheets/auth.module.css';
 
 const Auth = props => {
+    const authContext = useContext(AuthContext);
+
     const [inputState, setInputState] = useState({
         username: '',
         password: '',
@@ -27,7 +31,8 @@ const Auth = props => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(inputState);
+        setInputState({ username: '', password: '' });
+        authContext.login();
     };
 
     return (
